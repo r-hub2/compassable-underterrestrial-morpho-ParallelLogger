@@ -323,7 +323,12 @@ formatError <- function(threadNumber, error, args) {
 getPhysicalMemory <- function() {
   os <- Sys.info()[['sysname']]
   if (os == "Windows") {
-    output <- system("wmic ComputerSystem get TotalPhysicalMemory /value", intern = TRUE)
+    output <- tryCatch(
+      system("wmic ComputerSystem get TotalPhysicalMemory /value", intern = TRUE),
+      error = function(e) {
+        return("")
+      }
+    )
     idx <- grep("TotalPhysicalMemory=", output, value = TRUE)
     if (length(idx) > 0) {
       memoryString <- gsub("TotalPhysicalMemory=", "", idx[1])
@@ -333,16 +338,30 @@ getPhysicalMemory <- function() {
       return(NA)
     }
   } else if (os == "Linux" || os == "Darwin") {
-    memory <- as.numeric(system("sysctl -n hw.memsize", intern = TRUE))
-    if (length(memory) > 0) {
+    memory <- tryCatch(
+      as.numeric(system("sysctl -n hw.memsize", intern = TRUE))/1e+09, 
+      error = function(e) {
+        return(NA)
+      },
+      warning = function(e) {
+        return(NA)
+      }
+    )
+    if (!is.na(memory)) {
       return(memory / (1e9)) # Convert to GB
     } else {
-      return(NA)
+      memory <- tryCatch({
+        output <- system("grep MemTotal /proc/meminfo", intern = TRUE)
+        output <- gsub("kB", "", gsub("MemTotal:", "", output), ignore.case = TRUE)
+        as.numeric(output) / 1e6 # Convert to GB
+      },
+      error = function(e) {
+        return(NA)
+      })
+      return(memory)
     }
   } else {
     warning("Operating system not supported.")
     return(NA)
   }
 }
-
-
