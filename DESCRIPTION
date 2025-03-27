@@ -24,7 +24,7 @@ BugReports: https://github.com/OHDSI/ParallelLogger/issues
 NeedsCompilation: no
 RoxygenNote: 7.3.2
 Encoding: UTF-8
-Packaged: 2025-03-26 14:16:42 UTC; schuemie
+Packaged: 2025-03-27 08:16:50 UTC; schuemie
 Author: Martijn Schuemie [aut, cre],
   Marc Suchard [aut],
   Observational Health Data Science and Informatics [cph]
