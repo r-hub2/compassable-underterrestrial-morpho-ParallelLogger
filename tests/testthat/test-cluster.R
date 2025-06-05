@@ -78,9 +78,5 @@ test_that("Test getThreadNumber", {
 
 
 test_that("Test getPhysicalMemory", {
-  # Very dirty, but skip_on_cran() doesn't work on CRAN's M1mac machine:
-  if (Sys.getenv("CDM5_POSTGRESQL_CDM_SCHEMA", unset = "") == "") {
-    skip("Not an OHDSI machine, so skipped test for getPhysicalMemory()")
-  }
   expect_false(is.na(getPhysicalMemory()))
 })
